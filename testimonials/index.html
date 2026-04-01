@@ -41,6 +41,7 @@
 
   <section class="testimonial-header">
     <h1>Customer Reviews</h1>
+    <div id="average-rating-container" style="font-size: 1.2rem; margin-bottom: 20px;"></div>
     <p>See what our customers are saying</p>
   </section>
 
@@ -56,24 +57,45 @@ async function fetchReviews() {
     const response = await fetch(scriptUrl);
     const reviews = await response.json();
     const container = document.getElementById('reviews-container');
+    const avgContainer = document.getElementById('average-rating-container');
     
-    container.innerHTML = ''; // Clears the screen
+    container.innerHTML = ''; 
 
-    reviews.forEach(review => {
-      const card = document.createElement('div');
-      card.className = 'review-card';
-      const rating = parseInt(review.rating) || 5;
-
-      card.innerHTML = `
-        <h3>${review.name || 'Anonymous'}</h3>
-        <div class="stars">${'★'.repeat(rating)}</div>
-        <p>${review.comment || ''}</p>
-        ${review.image ? `<img src="${review.image}" alt="Customer photo">` : ''}
+    if (reviews.length > 0) {
+      // --- LOGIC FOR AVERAGE RATING ---
+      const totalRating = reviews.reduce((sum, review) => sum + (parseInt(review.rating) || 0), 0);
+      const average = (totalRating / reviews.length).toFixed(1); // e.g., 4.8
+      
+      // Create the Star display for the average
+      const fullStars = Math.floor(average);
+      const halfStar = average % 1 >= 0.5 ? '½' : '';
+      
+      avgContainer.innerHTML = `
+        <strong style="font-size: 2rem;">${average}</strong> 
+        <span style="color: gold;">${'★'.repeat(fullStars)}${halfStar}</span>
+        <div style="font-size: 0.9rem; color: #666;">Based on ${reviews.length} reviews</div>
       `;
-      container.appendChild(card);
-    });
+      // --------------------------------
+
+      reviews.forEach(review => {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        const rating = parseInt(review.rating) || 5;
+
+        card.innerHTML = `
+          <h3>${review.name || 'Anonymous'}</h3>
+          <div class="stars">${'★'.repeat(rating)}</div>
+          <p>${review.comment || ''}</p>
+          ${review.image ? `<img src="${review.image}" alt="Customer photo" onerror="this.style.display='none'">` : ''}
+        `;
+        container.appendChild(card);
+      });
+    } else {
+      avgContainer.innerHTML = "No reviews approved yet.";
+    }
   } catch (e) {
     console.error("Error:", e);
+    document.getElementById('reviews-container').innerHTML = "<p>Error loading reviews.</p>";
   }
 }
 
