@@ -1,4 +1,4 @@
-const csvUrl = 'YOUR_CSV_LINK';
+const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStHTB6aapoMk27E8fmPXFqX8bvHK2awMIjSWAZrvS8h3CdiQ0ONQfjwh8VoGLrWui_xZFjvCfNVAgH/pubhtml?gid=697532784&single=true';
 
 fetch(csvUrl)
   .then(response => response.text())
