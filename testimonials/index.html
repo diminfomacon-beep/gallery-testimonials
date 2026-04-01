@@ -4,7 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Testimonials</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      margin: 0;
+    }
+    .testimonial-header {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .review-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .review-card img {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    .stars {
+      color: gold;
+      margin: 10px 0;
+    }
+  </style>
 </head>
 <body>
 
@@ -15,6 +46,39 @@
 
   <div id="reviews-container" class="reviews-grid"></div>
 
-  <script src="script.js"></script>
+  <script>
+    // Replace this with your published CSV link from Google Sheets
+    const csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vStHTB6aapoMk27E8fmPXFqX8bvHK2awMIjSWAZrvS8h3CdiQ0ONQfjwh8VoGLrWui_xZFjvCfNVAgH/pubhtml?gid=697532784&single=true';
+
+    async function fetchReviews() {
+      const response = await fetch(csvUrl);
+      const text = await response.text();
+      const rows = text.split('\\n').map(r => r.split(','));
+      const headers = rows.shift();
+
+      const reviews = rows.map(row => {
+        let obj = {};
+        headers.forEach((h, i) => {
+          obj[h.trim()] = row[i] ? row[i].trim() : '';
+        });
+        return obj;
+      });
+
+      const container = document.getElementById('reviews-container');
+      reviews.forEach(review => {
+        const card = document.createElement('div');
+        card.className = 'review-card';
+        card.innerHTML = `
+          <h3>${review.Name || 'Anonymous'}</h3>
+          <div class="stars">${'★'.repeat(parseInt(review.Rating || 5))}</div>
+          <p>${review.Comment || ''}</p>
+          ${review.Image ? `<img src="${review.Image}" alt="Customer photo">` : ''}
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    fetchReviews();
+  </script>
 </body>
 </html>
