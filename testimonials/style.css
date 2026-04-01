@@ -1,0 +1,35 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #fafafa;
+  margin: 0;
+}
+
+.testimonial-header {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.review-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.review-card img {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.stars {
+  color: gold;
+  margin: 10px 0;
+}
