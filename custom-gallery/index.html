@@ -3,16 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Gallery</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #fafafa;
-      margin: 0;
+    body { font-family: Arial, sans-serif; background: transparent; margin: 0; }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 15px;
     }
-    .gallery-header {
+    .gallery-card {
+      background: white;
+      border-radius: 12px;
+      padding: 15px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       text-align: center;
-      padding: 40px 20px;
+    }
+    .gallery-card h3 { font-size: 1.1rem; margin-bottom: 10px; color: #333; }
+    .gallery-card img, .gallery-card video {
+      width: 100%;
+      border-radius: 10px;
+      display: block;
     }
     .filter-buttons {
       display: flex;
@@ -20,91 +30,90 @@
       gap: 10px;
       margin-bottom: 20px;
       flex-wrap: wrap;
+      padding: 10px;
     }
     .filter-buttons button {
-      padding: 10px 20px;
-      border: none;
-      background: #007bff;
-      color: white;
-      border-radius: 6px;
+      padding: 8px 16px;
+      border: 1px solid #007bff;
+      background: white;
+      color: #007bff;
+      border-radius: 20px;
       cursor: pointer;
+      transition: 0.3s;
     }
     .filter-buttons button.active {
-      background: #0056b3;
-    }
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 20px;
-    }
-    .gallery-card {
-      background: white;
-      border-radius: 12px;
-      padding: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    .gallery-card img, .gallery-card video {
-      width: 100%;
-      border-radius: 10px;
-      margin-top: 10px;
+      background: #007bff;
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <section class="gallery-header">
-    <h1>Our Gallery</h1>
-    <p>Check out our latest creations</p>
-  </section>
-
   <div class="filter-buttons" id="filter-buttons"></div>
   <div id="gallery-container" class="gallery-grid"></div>
 
   <script>
-    // Replace this with your published CSV link or JSON source
+    // FIXED: Added commas between objects and added type checks
     const items = [
-      //{ title: 'Tumbler Design 1', category: 'Tumblers', type: 'image', src: 'https://via.placeholder.com/300x200' },
+       //{ title: 'Tumbler Design 1', category: 'Tumblers', type: 'image', src: 'https://via.placeholder.com/300x200' },
+
      // { title: 'Custom Mug', category: 'Mugs', type: 'image', src: 'https://via.placeholder.com/300x200' },
-      { title: 'Big Swig with matching Key Chain', category: 'Videos', type: 'video', src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Big%20Swig%20One%20Piece.mp4' }
-      { title: 'Holographic Ombre Grippy Mint', category: 'Videos', type: 'video', src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Holo%20Green%2030oz%20flowers.mp4' }
-      { title: 'Holographic Ombre Grippy Purple', category: 'Videos', type: 'video', src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Nurse%20holo%20purple.mp4' }
+      { 
+        title: 'Big Swig with matching Key Chain', 
+        category: 'Videos', 
+        type: 'video', 
+        src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Big%20Swig%20One%20Piece.mp4' 
+      },
+      { 
+        title: 'Holographic Ombre Grippy Mint', 
+        category: 'Videos', 
+        type: 'video', 
+        src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Holo%20Green%2030oz%20flowers.mp4' 
+      },
+      { 
+        title: 'Holographic Ombre Grippy Purple', 
+        category: 'Videos', 
+        type: 'video', 
+        src: 'https://github.com/diminfomacon-beep/gallery-testimonials/raw/main/custom-gallery/images/Nurse%20holo%20purple.mp4' 
+      }
     ];
 
     const categories = ['All', ...new Set(items.map(i => i.category))];
-
     const filterButtonsContainer = document.getElementById('filter-buttons');
-    categories.forEach(cat => {
-      const btn = document.createElement('button');
-      btn.textContent = cat;
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.filter-buttons button').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        renderGallery(cat);
-      });
-      filterButtonsContainer.appendChild(btn);
-    });
-
-    // Activate first button by default
-    filterButtonsContainer.querySelector('button').classList.add('active');
-
     const galleryContainer = document.getElementById('gallery-container');
 
     function renderGallery(category) {
       galleryContainer.innerHTML = '';
       items.forEach(item => {
         if(category !== 'All' && item.category !== category) return;
+        
         const card = document.createElement('div');
         card.className = 'gallery-card';
-        card.innerHTML = `<h3>${item.title}</h3>`;
-        if(item.type === 'image') card.innerHTML += `<img src="${item.src}" alt="${item.title}">`;
-        if(item.type === 'video') card.innerHTML += `<video controls src="${item.src}"></video>`;
+        
+        let mediaHtml = item.type === 'video' 
+          ? `<video controls playsinline src="${item.src}"></video>`
+          : `<img src="${item.src}" alt="${item.title}">`;
+
+        card.innerHTML = `<h3>${item.title}</h3>${mediaHtml}`;
         galleryContainer.appendChild(card);
       });
     }
 
+    // Create Buttons
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.textContent = cat;
+      btn.onclick = () => {
+        document.querySelectorAll('.filter-buttons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderGallery(cat);
+      };
+      filterButtonsContainer.appendChild(btn);
+    });
+
+    // Default View
+    filterButtonsContainer.querySelector('button').classList.add('active');
     renderGallery('All');
   </script>
-
 </body>
 </html>
