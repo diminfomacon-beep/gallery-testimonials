@@ -4,42 +4,105 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Gallery</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fafafa;
+      margin: 0;
+    }
+    .gallery-header {
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .filter-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .filter-buttons button {
+      padding: 10px 20px;
+      border: none;
+      background: #007bff;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .filter-buttons button.active {
+      background: #0056b3;
+    }
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+    .gallery-card {
+      background: white;
+      border-radius: 12px;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .gallery-card img, .gallery-card video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
 
   <section class="gallery-header">
-    <h1>Our Custom Work</h1>
-    <p>Browse some of our favorite creations</p>
+    <h1>Our Gallery</h1>
+    <p>Check out our latest creations</p>
   </section>
 
-  <div class="filter-buttons">
-    <button data-filter="all">All</button>
-    <button data-filter="shirts">Shirts</button>
-    <button data-filter="tumblers">Tumblers</button>
-    <button data-filter="baby">Baby Gifts</button>
-    <button data-filter="memorial">Memorial</button>
-    <button data-filter="seasonal">Seasonal</button>
-  </div>
+  <div class="filter-buttons" id="filter-buttons"></div>
+  <div id="gallery-container" class="gallery-grid"></div>
 
-  <div class="gallery-grid">
+  <script>
+    // Replace this with your published CSV link or JSON source
+    const items = [
+      { title: 'Tumbler Design 1', category: 'Tumblers', type: 'image', src: 'https://via.placeholder.com/300x200' },
+      { title: 'Custom Mug', category: 'Mugs', type: 'image', src: 'https://via.placeholder.com/300x200' },
+      { title: 'Video Demo', category: 'Videos', type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' }
+    ];
 
-    <div class="gallery-item shirts">
-      <img src="images/shirt1.jpg" alt="Custom Shirt">
-    </div>
+    const categories = ['All', ...new Set(items.map(i => i.category))];
 
-    <div class="gallery-item tumblers">
-      <img src="images/tumbler1.jpg" alt="Custom Tumbler">
-    </div>
+    const filterButtonsContainer = document.getElementById('filter-buttons');
+    categories.forEach(cat => {
+      const btn = document.createElement('button');
+      btn.textContent = cat;
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-buttons button').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderGallery(cat);
+      });
+      filterButtonsContainer.appendChild(btn);
+    });
 
-    <div class="gallery-item memorial">
-      <video controls>
-        <source src="videos/memorial-video.mp4" type="video/mp4">
-      </video>
-    </div>
+    // Activate first button by default
+    filterButtonsContainer.querySelector('button').classList.add('active');
 
-  </div>
+    const galleryContainer = document.getElementById('gallery-container');
 
-  <script src="script.js"></script>
+    function renderGallery(category) {
+      galleryContainer.innerHTML = '';
+      items.forEach(item => {
+        if(category !== 'All' && item.category !== category) return;
+        const card = document.createElement('div');
+        card.className = 'gallery-card';
+        card.innerHTML = `<h3>${item.title}</h3>`;
+        if(item.type === 'image') card.innerHTML += `<img src="${item.src}" alt="${item.title}">`;
+        if(item.type === 'video') card.innerHTML += `<video controls src="${item.src}"></video>`;
+        galleryContainer.appendChild(card);
+      });
+    }
+
+    renderGallery('All');
+  </script>
+
 </body>
 </html>
