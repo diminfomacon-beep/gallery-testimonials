@@ -56,6 +56,7 @@ async function fetchReviews() {
   try {
     const response = await fetch(scriptUrl);
     const reviews = await response.json();
+    reviews.reverse(); // This puts the most recent "Approved" reviews at the top
     const container = document.getElementById('reviews-container');
     const avgContainer = document.getElementById('average-rating-container');
     
