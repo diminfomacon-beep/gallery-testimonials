@@ -90,9 +90,25 @@
         const card = document.createElement('div');
         card.className = 'gallery-card';
         
-        let mediaHtml = item.type === 'video' 
-          ? `<video controls playsinline src="${item.src}"></video>`
-          : `<img src="${item.src}" alt="${item.title}">`;
+       let mediaHtml = '';
+
+      if (item.type === 'video') {
+  // autoplay: starts immediately
+  // muted: REQUIRED for autoplay to work in Chrome/Safari
+  // loop: starts over when finished
+  // playsinline: keeps it from opening fullscreen on iPhones
+      mediaHtml = `
+        <video 
+          src="${item.src}" 
+          autoplay 
+          muted 
+          loop 
+          playsinline 
+          style="width:100%; border-radius:10px;">
+        </video>`;
+    } else {
+      mediaHtml = `<img src="${item.src}" alt="${item.title}" style="width:100%; border-radius:10px;">`;
+    }
 
         card.innerHTML = `<h3>${item.title}</h3>${mediaHtml}`;
         galleryContainer.appendChild(card);
