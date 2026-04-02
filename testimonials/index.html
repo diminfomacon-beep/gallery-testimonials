@@ -32,7 +32,7 @@
       margin-top: 10px;
     }
     .stars {
-      color: gold;
+      color: #d6b705;
       margin: 10px 0;
     }
   </style>
@@ -74,7 +74,7 @@ async function fetchReviews() {
       avgContainer.innerHTML = `
         <strong style="font-size: 2rem;">${average}</strong> 
         <span style="color: gold;">${'★'.repeat(fullStars)}${halfStar}</span>
-        <div style="font-size: 0.9rem; color: #666;">Based on ${reviews.length} reviews</div>
+        <div style="font-size: 1.5rem; color: #666;">Based on ${reviews.length} reviews</div>
       `;
       // --------------------------------
 
